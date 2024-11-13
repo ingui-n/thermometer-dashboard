@@ -1,27 +1,36 @@
 import {pocketBase} from "@/lib/pocketbase";
 
-export const subscribeToTemperature = async (callback) => {
-  const pb = await pocketBase();
-
-  // return pb.realtime.subscribe('temperature', callback);
-  return pb.collection('temperature').subscribe('*', (e) => {
-    console.log(e.action);
-    console.log(e.record);
-  }, { /* other options like expand, custom headers, etc. */ });
-};
-
 export const getLatestTemperature = async (device) => {
   const pb = await pocketBase();
 
   const temperature = await pb.collection('temperature').getList(1, 1, {
     sort: '-created',
-    filter: `device = "${device}"`,
+    filter: `device = "${device}"`
   });
 
-  return temperature[0];
+  return temperature.items.length === 1 ? temperature.items[0] : null;
+};
+
+export const getAllDevices = async () => {
+  const pb = await pocketBase();
+
+  return await pb.collection('devices').getList(1, 100);
 };
 
 export const getAllLatestTemperature = async () => {
-  //todo get active devices from db
-  //todo for all devices run getLatestTemperature
+  const devices = await getAllDevices();
+
+  const temperatures = [];
+
+  for (const device of devices.items) {
+    const temperature = await getLatestTemperature(device.device);
+
+    if (!temperature)
+      continue;
+
+    temperature.name = device.name;
+    temperatures.push(temperature);
+  }
+
+  return temperatures;
 };
