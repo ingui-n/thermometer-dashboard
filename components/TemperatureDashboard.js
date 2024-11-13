@@ -7,7 +7,7 @@ import {pocketBase} from "@/lib/pocketbase";
 export default function TemperatureDashboard({defaultTemperatures}) {
   const [temperatures, setTemperature] = useState(defaultTemperatures || []);
   const [isLoaded, setIsLoaded] = useState(false);
-  console.log(temperatures)
+
   useEffect(() => {
     const replaceTemperature = (newTemperature) => {
       setTemperature(temperatures.map(
