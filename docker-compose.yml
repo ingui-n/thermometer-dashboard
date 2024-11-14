@@ -1,0 +1,13 @@
+services:
+  next:
+    container_name: temperature-dashboard
+    build:
+      context: .
+    ports:
+      - '9400:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+    restart: always
