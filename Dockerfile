@@ -1,13 +1,16 @@
-FROM oven/bun:alpine
+FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package.json bun.lockb ./
+COPY package*.json ./
 
-RUN bun install
+RUN npm cache clean --force
+RUN npm install  --legacy-peer-deps
+
 COPY . .
-RUN bun run build
+
+RUN npm run build
 
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+CMD ["npm", "run", "start"]
